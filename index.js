@@ -21,9 +21,13 @@ amqp
         await channel.bindQueue("email", "notif", "email");
 
         app.get("/rabbitmq/send-notif-email", (req, res) => {
-          let { message } = req.query;
-          channel.publish("notif", "email", Buffer.from(message));
-          res.json("success");
+          try {
+            let { message } = req.query;
+            channel.publish("notif", "email", Buffer.from(message));
+            res.json("success");
+          } catch (error) {
+            res.json(error.message);
+          }
         });
       })
       .catch((err) => {
